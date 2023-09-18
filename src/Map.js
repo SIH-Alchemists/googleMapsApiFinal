@@ -2,21 +2,16 @@ import React, { useState, useRef, useMemo, useCallback } from "react";
 import {
   GoogleMap,
   Circle,
-  LoadScript,
+ 
   Marker,
   MarkerClusterer,
-  DirectionsService,
+ 
   DirectionsRenderer,
 } from "@react-google-maps/api";
 import Distance from "./distance";
 const Map = ({ agencies, initialCenter, initialZoom }) => {
   const [selectedAgency, setSelectedAgency] = useState(null);
   const [directions, setDirections] = useState(null);
-  const [mapState, setMapState] = useState({
-    center: initialCenter,
-    zoom: initialZoom,
-  });
-  const [origin, setOrigin] = useState(initialCenter);
   // const [duration, setDuration] = useState('')
   const [directionsResponse, setDirectionsResponse] = useState(null);
   // const [distance, setDistance] = useState(null);
@@ -101,11 +96,11 @@ const Map = ({ agencies, initialCenter, initialZoom }) => {
       >
         Zoom out
       </button>
-      <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
+      {/* <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}> */}
         <GoogleMap
           mapContainerStyle={{ width: "100%", height: "800px" }}
-          center={mapState.center}
-          zoom={mapState.zoom}
+          center={initialCenter}
+          zoom={initialZoom}
           options={options}
           onLoad={onLoad}
         >
@@ -156,11 +151,11 @@ const Map = ({ agencies, initialCenter, initialZoom }) => {
           />
           <Circle center={initialCenter} radius={45000} options={farOptions} />
         </GoogleMap>
-      </LoadScript>
+      {/* </LoadScript> */}
 
      
       <br />
-      <button onClick={handleResetMap}>Reset Map</button>
+    
       {/* {selectedAgency && (
         <p>Distance from {initialCenter.name} to {selectedAgency.name}: {distance} </p>
       )}

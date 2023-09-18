@@ -2,10 +2,18 @@
 
 import React,{useMemo} from 'react';
 import Map from './Map'; // Adjust the import path
-
+import {
+  Autocomplete, useLoadScript
+} from '@react-google-maps/api'
+import { useRef, useState } from 'react'
 function App() {
   // Fetch agency data and calculate nearby agencies
   // Define your agency location (myLat, myLng) and nearbyAgencies array here
+
+  /** @type React.MutableRefObject<HTMLInputElement> */
+  const originRef = useRef('')
+
+  
   function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // Earth's radius in km
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -21,6 +29,10 @@ function App() {
     return distance;
   }
   const myAgencyLocation = { lat: 18.528423, lng: 73.873863,name:"pune station" }; // pune station Replace with your agency's location
+  if (originRef.current.value) {
+    
+    console.log(originRef.current.value);
+  }
   // const agencies = [
   //   {lat: 18.457533, lng: 73.867744,name:"Katraj"},
   //   {lat: 18.499081, lng: 73.934174,name:"hadapsar"},
@@ -49,9 +61,23 @@ function App() {
     );
     return distance <= 20; // 20km radius
   });
-    
+  // const showAgencies=()=>{
+
+  // }
+  const [ libraries ] = useState(['places']);
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    libraries: libraries,
+  })
+  if (!isLoaded) return <div>Loading...</div>;
   return (
     <div>
+        <Autocomplete>
+              <input type='text' placeholder='Origin' ref={originRef} />
+            </Autocomplete>
+            {/* <button type='submit' onClick={showAgencies}>
+              Calculate Route
+            </button> */}
       <Map agencies={nearbyAgencies} initialCenter={myAgencyLocation} initialZoom={10} />
     </div>
   );
