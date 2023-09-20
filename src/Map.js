@@ -10,32 +10,20 @@ import Distance from "./distance";
 import "./index.css";
 import Places from "./places";
 const Map = ({ initialCenter, initialZoom }) => {
-  const [selectedAgency, setSelectedAgency] = useState(null);
+  
   const [directions, setDirections] = useState(null);
   const [currAgency, setCurrAgency] = useState(initialCenter);
-  const [directionsResponse, setDirectionsResponse] = useState(null);
-  const mapRef = useRef();
-  const onMarkerClick = (agency) => {
-    setSelectedAgency(agency);
-    calculateDirections(agency);
-    calculateRoute();
-  };
   const [filters,setFilters] = useState([]);
-  
-  async function calculateRoute() {
-    if (selectedAgency === null || selectedAgency === "") {
-      return;
-    }
-    // eslint-disable-next-line no-undef
-    const directionsService = new google.maps.DirectionsService();
-    const results = await directionsService.route({
-      origin: currAgency,
-      destination: selectedAgency,
-      // eslint-disable-next-line no-undef
-      travelMode: google.maps.TravelMode.DRIVING,
-    });
-    setDirectionsResponse(results);
-  }
+  const mapRef = useRef();
+  const onLoad = useCallback((map) => (mapRef.current = map), []);
+  const options = useMemo(
+    () => ({
+      mapId: "b181cac70f27f5e6",
+      disableDefaultUI: true,
+      clickableIcons: false,
+    }),
+    []
+  );
 
   function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // Earth's radius in km
@@ -119,16 +107,10 @@ const Map = ({ initialCenter, initialZoom }) => {
       }
     );
   };
-
-  const onLoad = useCallback((map) => (mapRef.current = map), []);
-  const options = useMemo(
-    () => ({
-      mapId: "b181cac70f27f5e6",
-      disableDefaultUI: true,
-      clickableIcons: false,
-    }),
-    []
-  );
+  const onMarkerClick = (agency) => {
+    calculateDirections(agency);
+  };
+  
 
   const renderMarkers = () => {
     return filteredAgencies.map((agency, index) => (
@@ -141,6 +123,25 @@ const Map = ({ initialCenter, initialZoom }) => {
     ));
   };
 
+  const handleUseMyLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        setCurrAgency({ lat: latitude, lng: longitude });
+        setDirections(null);
+        mapRef.current.panTo(currAgency);
+        mapRef.current.setZoom(10);
+      });
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  };
+  const handleResetMap = ()=>{
+    setDirections(null);
+    setCurrAgency(initialCenter);
+    mapRef.current.panTo(initialCenter);
+    mapRef.current.setZoom(10);
+  }
   const handleFilter=(e)=>{
     e.preventDefault();
     console.log(filters,filteredAgencies)
@@ -197,13 +198,23 @@ const Map = ({ initialCenter, initialZoom }) => {
         {!currAgency && <p>Enter the address of your agency.</p>}
 
         {directions && <Distance leg={directions.routes[0].legs[0]} />}
+
+
         <button
           onClick={() => {
             mapRef.current.panTo(currAgency);
             mapRef.current.setZoom(10);
           }}
+          className="btn"
         >
           Zoom out
+        </button>
+        <button onClick={handleUseMyLocation} className="btn">Use My Location</button>
+        <button
+          onClick={handleResetMap}
+          className="btn"
+        >
+       Reset Map
         </button>
         <div>
           <form name="form-content"  onSubmit={handleFilter} style={{'marginTop':'30%'}}>
@@ -276,6 +287,7 @@ const Map = ({ initialCenter, initialZoom }) => {
       </div>
 
       <br />
+
     </div>
   );
 };
