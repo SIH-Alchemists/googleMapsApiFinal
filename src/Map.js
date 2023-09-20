@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback } from "react";
+import React, { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import {
   GoogleMap,
   Circle,
@@ -20,7 +20,8 @@ const Map = ({ initialCenter, initialZoom }) => {
     calculateDirections(agency);
     calculateRoute();
   };
-
+  const [filters,setFilters] = useState([]);
+  
   async function calculateRoute() {
     if (selectedAgency === null || selectedAgency === "") {
       return;
@@ -50,13 +51,27 @@ const Map = ({ initialCenter, initialZoom }) => {
     const distance = R * c; // Distance in km
     return distance;
   }
-  const generateAgencies = (position) => {
+  function generateRandomFilters() {
+    const allFilters = ['earthquake', 'fire', 'floods'];
+    const numFilters = Math.floor(Math.random() * allFilters.length) + 1; // Generate a random number of filters
+    const randomFilters = [];
+  
+    for (let i = 0; i < numFilters; i++) {
+      const randomIndex = Math.floor(Math.random() * allFilters.length);
+      randomFilters.push(allFilters[randomIndex]);
+    }
+  
+    return randomFilters;
+  }
+  const generateAgencies = (position, filters) => {
     const _agency = [];
     for (let i = 0; i < 100; i++) {
       const direction = Math.random() < 0.5 ? -2 : 2;
       _agency.push({
         lat: position.lat + Math.random() / direction,
         lng: position.lng + Math.random() / direction,
+        // filters:['earthquake','fire','floods']
+        filters: generateRandomFilters()
       });
     }
     const agencies = _agency.filter((agency) => {
@@ -66,12 +81,26 @@ const Map = ({ initialCenter, initialZoom }) => {
         agency.lat,
         agency.lng
       );
+      // filters.map(ele=> console.log(ele))
+      // console.log(agency)
+      // console.log('filters are:',filters)
+      // if(filters!==[]){
+      //   let foundElement = agency.filters.find((element)=>{
+      //     filters.map(ele=> ele === element)
+      //   })
+      //   if(foundElement===undefined){
+      //     return false
+      //   }
+      // }
+      // else
       return distance <= 30;
+      // const passFilters = filters.every(filter => agency.filters.includes(filter));
+      // return distance <= 30 && passFilters;
     });
     return agencies;
   };
  
-  const agencies = useMemo(() => generateAgencies(currAgency), [currAgency]);
+  // const agencies = useMemo(() => generateAgencies(currAgency, filters), [currAgency, filters]);
 
   const calculateDirections = (agency) => {
     const directionsService = new window.google.maps.DirectionsService();
@@ -102,7 +131,7 @@ const Map = ({ initialCenter, initialZoom }) => {
   );
 
   const renderMarkers = () => {
-    return agencies.map((agency, index) => (
+    return filteredAgencies.map((agency, index) => (
       <Marker
         key={index}
         position={{ lat: agency.lat, lng: agency.lng }}
@@ -112,6 +141,49 @@ const Map = ({ initialCenter, initialZoom }) => {
     ));
   };
 
+  const handleFilter=(e)=>{
+    e.preventDefault();
+    console.log(filters,filteredAgencies)
+    // console.log(e.target.value)
+  }
+
+  const handleChange=(e)=>{
+    let temp=filters
+    
+    if (e.target.checked) {
+      temp=[...temp, e.target.value]
+      // setFilters(
+      //   [...temp, e.target.value]
+      // );
+    }
+  
+    // Case 2  : The user unchecks the box
+    else {
+      temp=temp.filter((data) => data !== e.target.value);
+      // setFilters(
+      //   temp.filter((data) => data !== e.target.value));
+    }
+    setFilters(temp);
+    console.log(filters,filteredAgencies)
+    filterAgencies(temp)
+  }
+
+  const [Agencies, setAgencies] = useState([]);
+  const [filteredAgencies,setfilteredAgencies]= useState([]);
+  useEffect(() => {
+    const generatedAgencies = generateAgencies(currAgency);
+    setAgencies(generatedAgencies);
+    setfilteredAgencies(generatedAgencies);
+  }, []);
+  const filterAgencies = (filters) => {
+    const temp=Agencies.filter(agency => filters.every(filter => agency.filters.includes(filter)));
+    console.log(filters,temp)
+    if(temp===Agencies) console.log('same list')
+    else console.log('different list')
+    setfilteredAgencies(temp);
+
+  };
+  // const filteredAgencies = useMemo(() => filterAgencies(filters), [filters]);
   return (
     <div className="container">
       <div className="controls">
@@ -133,6 +205,26 @@ const Map = ({ initialCenter, initialZoom }) => {
         >
           Zoom out
         </button>
+        <div>
+          <form name="form-content"  onSubmit={handleFilter} style={{'marginTop':'30%'}}>
+          <h1>Filters</h1>
+          <div style={{'textAlign':'center'}}>
+          <h2>Type Of Disaster</h2>
+            <input type="checkbox" id="disaster_1" value='earthquake' onChange={handleChange}/>
+            <label for="disaster_1"> Earthquake</label>
+            <br/><br/>
+            <input type="checkbox" id="disaster_2" value='floods' onChange={handleChange}/>
+            <label for="disaster_2"> Floods</label>
+            <br/><br/>
+            <input type="checkbox" id="disaster_3" value='fire' onChange={handleChange}/>
+            <label for="disaster_3"> Fire</label>
+            <br/><br/>
+            {/* <button type="submit">Apply</button>
+              */}
+              <p id="txt">Number of agencies : {filteredAgencies.length}</p> 
+              </div>
+          </form>
+        </div>
       </div>
       <div className="map">
         <GoogleMap
@@ -164,7 +256,7 @@ const Map = ({ initialCenter, initialZoom }) => {
 
           <MarkerClusterer>
             {(clusterer) =>
-              agencies.map((agency) => (
+              filteredAgencies.map((agency) => (
                 <Marker
                   key={agency.lat}
                   position={agency}
