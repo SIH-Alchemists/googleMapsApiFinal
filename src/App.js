@@ -6,6 +6,8 @@ import {
   useLoadScript
 } from '@react-google-maps/api'
 import { useState } from 'react'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/homepage";
 function App() {
   
 
@@ -27,10 +29,18 @@ function App() {
   })
   if (!isLoaded) return <div>Loading...</div>;
   return (
-    <div>
-      <Map initialCenter={myAgencyLocation} initialZoom={10} />
+    <>
+    <BrowserRouter>
+    <Routes>
+      <Route path="/maps" element={ <Map initialCenter={myAgencyLocation} initialZoom={10} />} />
+      <Route path="/" element={ <Home/>} />
+    </Routes>
+  </BrowserRouter>
+    {/* <div>
+     
       
-    </div>
+    </div> */}
+    </>
   );
 }
 

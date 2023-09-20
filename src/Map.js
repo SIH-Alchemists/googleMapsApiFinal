@@ -9,6 +9,7 @@ import {
 import Distance from "./distance";
 import "./index.css";
 import Places from "./places";
+import Navbar from "./components/navbar";
 const Map = ({ initialCenter, initialZoom }) => {
   
   const [directions, setDirections] = useState(null);
@@ -117,7 +118,7 @@ const Map = ({ initialCenter, initialZoom }) => {
       <Marker
         key={index}
         position={{ lat: agency.lat, lng: agency.lng }}
-        label={`${agency.name}`}
+        // label={`${agency.name}`}
         onClick={() => onMarkerClick(agency)}
       />
     ));
@@ -175,7 +176,7 @@ const Map = ({ initialCenter, initialZoom }) => {
     const generatedAgencies = generateAgencies(currAgency);
     setAgencies(generatedAgencies);
     setfilteredAgencies(generatedAgencies);
-  }, []);
+  }, [currAgency]);
   const filterAgencies = (filters) => {
     const temp=Agencies.filter(agency => filters.every(filter => agency.filters.includes(filter)));
     console.log(filters,temp)
@@ -186,6 +187,8 @@ const Map = ({ initialCenter, initialZoom }) => {
   };
   // const filteredAgencies = useMemo(() => filterAgencies(filters), [filters]);
   return (
+    <>
+    {/* <Navbar/> */}
     <div className="container">
       <div className="controls">
         <h1>Find nearby agencies</h1>
@@ -289,6 +292,7 @@ const Map = ({ initialCenter, initialZoom }) => {
       <br />
 
     </div>
+    </>
   );
 };
 const defaultOptions = {
