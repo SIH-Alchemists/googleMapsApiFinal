@@ -111,9 +111,99 @@ function Home() {
                   </div>
                   {/*body*/}
                   <div className="relative p-6 flex-auto">
-                    <p className="my-4 text-slate-500 text-lg leading-relaxed">
-                      Type of disaster
-                    </p>
+                  <form>
+                      <div className="mb-4">
+                        <label
+                          htmlFor="disasterType"
+                          className="block font-medium mb-2"
+                        >
+                          Type of Disaster
+                        </label>
+                        <select
+                          id="disasterType"
+                          name="disasterType"
+                          className="w-full px-4 py-2 border rounded-md"
+                        >
+                          <option value="earthquake">Earthquake</option>
+                          <option value="floods">Floods</option>
+                          <option value="hurricane">Hurricane</option>
+                          <option value="fire">Fire</option>
+                          <option value="tornado">Tornado</option>
+                          <option value="tsunami">Tsunami</option>
+                          <option value="volcano">Volcano Eruption</option>{" "}
+                          <option value="earthquake">Earthquake</option>
+                          <option value="floods">Floods</option>
+                          <option value="hurricane">Hurricane</option>
+                          <option value="fire">Fire</option>
+                        </select>
+                      </div>
+
+                      <div className="mb-4">
+                        <label className="block font-medium mb-2">
+                          Severity of Disaster
+                        </label>
+                        <div className="flex space-x-4">
+                          <label>
+                            <input
+                              type="radio"
+                              name="severity"
+                              value="green"
+                              className="mr-2 hidden"
+                            />
+                            <div className="w-12 h-12 bg-green-500 rounded-full cursor-pointer"></div>
+                          </label>
+                          <label>
+                            <input
+                              type="radio"
+                              name="severity"
+                              value="yellow"
+                              className="mr-2 hidden"
+                            />
+                            <div className="w-12 h-12 bg-yellow-500 rounded-full cursor-pointer"></div>
+                          </label>
+                          <label>
+                            <input
+                              type="radio"
+                              name="severity"
+                              value="red"
+                              className="mr-2 hidden"
+                            />
+                            <div className="w-12 h-12 bg-red-500 rounded-full cursor-pointer"></div>
+                          </label>
+                        </div>
+                      </div>
+                      <div className="mb-4">
+                        <label
+                          htmlFor="contactDetails"
+                          className="block font-medium mb-2"
+                        >
+                          Contact Details
+                        </label>
+                        <input
+                          type="text"
+                          id="contactDetails"
+                          name="contactDetails"
+                          className="w-full px-4 py-2 border rounded-md"
+                          placeholder="Enter contact details"
+                        />
+                      </div>
+
+                      <div className="mb-4">
+                        <label
+                          htmlFor="location"
+                          className="block font-medium mb-2"
+                        >
+                          Location
+                        </label>
+                        <input
+                          type="text"
+                          id="location"
+                          name="location"
+                          className="w-full px-4 py-2 border rounded-md"
+                          placeholder="Enter location"
+                        />
+                      </div>
+                    </form>
                   </div>
                   {/*footer*/}
                   <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
