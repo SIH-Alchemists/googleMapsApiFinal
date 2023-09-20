@@ -54,7 +54,7 @@ const Map = ({ initialCenter, initialZoom }) => {
   }
   const generateAgencies = (position, filters) => {
     const _agency = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 60; i++) {
       const direction = Math.random() < 0.5 ? -2 : 2;
       _agency.push({
         lat: position.lat + Math.random() / direction,
@@ -82,7 +82,7 @@ const Map = ({ initialCenter, initialZoom }) => {
       //   }
       // }
       // else
-      return distance <= 30;
+      return distance <= 45;
       // const passFilters = filters.every(filter => agency.filters.includes(filter));
       // return distance <= 30 && passFilters;
     });
