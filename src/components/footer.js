@@ -1,7 +1,7 @@
 import React from "react";
 function Footer() {
   return (
-    <footer className="bg-[#f2c744]  shadow dark:bg-[#f2c744] ">
+    <footer className="bg-yellow-400  shadow dark:bg-yellow-400 ">
       <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
         <div className="sm:flex sm:items-center sm:justify-between">
           {/* <img src="" className="h-8 mr-3" alt="Logo" /> */}
